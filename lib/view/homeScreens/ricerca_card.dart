@@ -44,6 +44,9 @@ class _RicercaCardState extends State<RicercaCard> {
                         border: Border.all(color: Colors.green, width: 2.0),
                       ),
                       child: ListTile(
+                        onTap: () {
+                          ricercaViewModel.showSnackBar("Cliccato ${prodotto.nome}", context);
+                        },
                         title: Text(prodotto.nome),
                         subtitle: Text("€${prodotto.prezzo}"),
                       ),
