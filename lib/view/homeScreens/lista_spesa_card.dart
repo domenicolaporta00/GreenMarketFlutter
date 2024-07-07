@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:green_market_flutter/view/conferma_ordine.dart';
 import 'package:green_market_flutter/viewModel/home/lista_spesa_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -86,12 +87,11 @@ class _ListaSpesaCardState extends State<ListaSpesaCard> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          "Totale:",
+                          "Totale: €",
                           style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w500),
                         ),
-                        const SizedBox(width: 4.0),
                         Text(
-                          "€${listaSpesaViewModel.totale}",
+                          "${listaSpesaViewModel.totale}",
                           style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.w500),
                         )
                       ],
@@ -101,7 +101,19 @@ class _ListaSpesaCardState extends State<ListaSpesaCard> {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            if(listaSpesaViewModel.listaProdotti.isEmpty) {
+                              listaSpesaViewModel.showSnackBar("Lista della spesa vuota", context);
+                            }
+                            else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ConfermaOrdine(totale: listaSpesaViewModel.totale)
+                                ),
+                              );
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                               foregroundColor: Colors.white

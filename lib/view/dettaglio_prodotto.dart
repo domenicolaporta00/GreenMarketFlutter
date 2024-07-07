@@ -28,7 +28,7 @@ class _DettaglioProdottoState extends State<DettaglioProdotto> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
-        title: const Text("GreenMarket"),
+        title: const Text("Dettaglio prodotto"),
         automaticallyImplyLeading: false,
         foregroundColor: Colors.white,
       ),
