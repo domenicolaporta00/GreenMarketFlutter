@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:green_market_flutter/view/dettaglio_prodotto.dart';
 import 'package:green_market_flutter/viewModel/home/ricerca_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -45,7 +46,13 @@ class _RicercaCardState extends State<RicercaCard> {
                       ),
                       child: ListTile(
                         onTap: () {
-                          ricercaViewModel.showSnackBar("Cliccato ${prodotto.nome}", context);
+                          //ricercaViewModel.showSnackBar("Cliccato ${prodotto.nome}", context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DettaglioProdotto(prodotto: prodotto)
+                            ),
+                          );
                         },
                         title: Text(prodotto.nome),
                         subtitle: Text("€${prodotto.prezzo}"),
