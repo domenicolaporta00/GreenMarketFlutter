@@ -26,6 +26,15 @@ class ListaSpesaViewModel extends ChangeNotifier {
       ProdottoInListaModel(nome: "Mele", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
       ProdottoInListaModel(nome: "Pere", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
       ProdottoInListaModel(nome: "Banane", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
+      ProdottoInListaModel(nome: "Mele2", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
+      ProdottoInListaModel(nome: "Pere2", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
+      ProdottoInListaModel(nome: "Banane2", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
+      ProdottoInListaModel(nome: "Mele3", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
+      ProdottoInListaModel(nome: "Pere3", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
+      ProdottoInListaModel(nome: "Banane3", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
+      ProdottoInListaModel(nome: "Mele4", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
+      ProdottoInListaModel(nome: "Pere4", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
+      ProdottoInListaModel(nome: "Banane4", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
     ];
     notifyListeners();
   }
@@ -42,6 +51,7 @@ class ListaSpesaViewModel extends ChangeNotifier {
 
   deleteListaSpesa() {
     _listaProdotti = [];
+    getTotale();
     notifyListeners();
   }
 
@@ -50,9 +60,19 @@ class ListaSpesaViewModel extends ChangeNotifier {
       ProdottoInListaModel(nome: "Mele", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
       ProdottoInListaModel(nome: "Pere", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
       ProdottoInListaModel(nome: "Banane", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
+      ProdottoInListaModel(nome: "Mele2", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
+      ProdottoInListaModel(nome: "Pere2", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
+      ProdottoInListaModel(nome: "Banane2", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
+      ProdottoInListaModel(nome: "Mele3", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
+      ProdottoInListaModel(nome: "Pere3", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
+      ProdottoInListaModel(nome: "Banane3", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
+      ProdottoInListaModel(nome: "Mele4", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
+      ProdottoInListaModel(nome: "Pere4", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
+      ProdottoInListaModel(nome: "Banane4", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
     ];
     prodotti.removeWhere((p)=>p.nome == nome);
     _listaProdotti = prodotti;
+    getTotale();
     notifyListeners();
   }
 
@@ -63,6 +83,11 @@ class ListaSpesaViewModel extends ChangeNotifier {
     }
     _totale = tot;
     notifyListeners();
+  }
+
+  showSnackBar(String message, BuildContext context) {
+    final snackBar = SnackBar(content: Text(message));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
 }

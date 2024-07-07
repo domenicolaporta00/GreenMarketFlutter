@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:green_market_flutter/viewModel/dettaglio_prodotto_view_model.dart';
 import 'package:green_market_flutter/viewModel/home/home_page_view_model.dart';
 import 'package:green_market_flutter/viewModel/home/lista_spesa_view_model.dart';
 import 'package:green_market_flutter/viewModel/home/profilo_view_model.dart';
@@ -23,6 +24,9 @@ void main() {
         ),
         ChangeNotifierProvider(
           create: (context)=>ProfiloViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context)=>DettaglioProdottoViewModel(),
         ),
       ],
       child: const MyApp(),
