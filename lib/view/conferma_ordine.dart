@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:green_market_flutter/viewModel/home/lista_spesa_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../viewModel/conferma_ordine_view_model.dart';
@@ -22,6 +23,7 @@ class _ConfermaOrdineState extends State<ConfermaOrdine> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final confermaOrdineViewModel = Provider.of<ConfermaOrdineViewModel>(context, listen: false);
+      final listaSpesaViewModel = Provider.of<ListaSpesaViewModel>(context, listen: false);
       confermaOrdineViewModel.getIndirizzo();
     });
   }
@@ -29,6 +31,7 @@ class _ConfermaOrdineState extends State<ConfermaOrdine> {
   @override
   Widget build(BuildContext context) {
     final confermaOrdineViewModel = Provider.of<ConfermaOrdineViewModel>(context);
+    final listaSpesaViewModel = Provider.of<ListaSpesaViewModel>(context);
     indirizzoTextEditController.text = confermaOrdineViewModel.indirizzo;
 
     return Scaffold(
@@ -101,8 +104,9 @@ class _ConfermaOrdineState extends State<ConfermaOrdine> {
             confermaOrdineViewModel.showSnackBar("Inserire un indirizzo", context);
           }
           else {
+            listaSpesaViewModel.deleteListaSpesa();
+            confermaOrdineViewModel.showSnackBar("Acquisto effettuato con successo ${listaSpesaViewModel.listaProdotti}", context);
             Navigator.pop(context);
-            confermaOrdineViewModel.showSnackBar("Acquisto effettuato con successo", context);
           }
         },
         child: const Icon((Icons.verified)),
