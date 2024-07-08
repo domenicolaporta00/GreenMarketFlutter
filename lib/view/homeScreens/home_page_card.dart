@@ -3,6 +3,8 @@ import 'package:flutter/widgets.dart';
 import 'package:green_market_flutter/viewModel/home/home_page_view_model.dart';
 import 'package:provider/provider.dart';
 
+import '../dettaglio_prodotto.dart';
+
 class HomePageCard extends StatefulWidget {
   const HomePageCard({super.key});
 
@@ -21,6 +23,7 @@ class _HomePageCardState extends State<HomePageCard> {
       final homePageViewModel = Provider.of<HomePageViewModel>(context, listen: false);
       homePageViewModel.getNome();
       homePageViewModel.updateStatus();
+      homePageViewModel.getProdottiRandom();
     });
   }
 
@@ -36,61 +39,121 @@ class _HomePageCardState extends State<HomePageCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              "images/ic_launcher.png",
-              height: 60,
-              width: 60,
-            ),
-            const SizedBox(height: 8.0),
-            Text(
-              "Ciao ${homeViewModel.nome} \u{1F44B}",
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 24,
-                fontWeight: FontWeight.w300,
+            Container(
+              margin: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset(
+                    "images/ic_launcher.png",
+                    height: 60,
+                    width: 60,
+                  ),
+                  const SizedBox(height: 8.0),
+                  Text(
+                    "Ciao ${homeViewModel.nome} \u{1F44B}",
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  Row(
+                    children: [
+                      Text(
+                        homeViewModel.status,
+                        style: TextStyle(
+                          color: homeViewModel.colore,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: 4.0),
+                      Text(
+                        homeViewModel.orari,
+                        style: const TextStyle(
+                          color: Colors.black87,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(
+                    color: Colors.grey,
+                    thickness: 2,
+                  ),
+                  const Text(
+                    "Prodotti in evidenza",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 8.0),
-            Row(
-              children: [
-                Text(
-                  homeViewModel.status,
-                  style: TextStyle(
-                    color: homeViewModel.colore,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(width: 4.0),
-                Text(
-                  homeViewModel.orari,
-                  style: const TextStyle(
-                    color: Colors.black87,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-              ],
+            SizedBox(
+              height: 250,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: homeViewModel.listaProdotti.length,
+                itemBuilder: (context, index) {
+                  final prodotto = homeViewModel.listaProdotti[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      elevation: 4.0,
+                      color: Colors.white,
+                      child: InkWell(
+                        onTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DettaglioProdotto(prodotto: prodotto)
+                            ),
+                          );
+                        },
+                        child: SizedBox(
+                          width: 200,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  prodotto.foto,
+                                  height: 180,
+                                  width: 180,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text(
+                                      prodotto.nome,
+                                      style: const TextStyle(
+                                          fontSize: 16.0
+                                      ),
+                                    ),
+                                    Text(
+                                      "€${prodotto.prezzo}",
+                                      style: const TextStyle(
+                                          fontSize: 16.0
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             )
-
-            /*EditText(
-              textEditingController: emailTextEditController,
-              iconData: Icons.email,
-              hintString: "Email",
-              isPass: false,
-              enabled: true,
-              type: TextInputType.emailAddress,
-            ),
-            ElevatedButton(
-              onPressed: (){
-                homeViewModel.setNome(emailTextEditController.text.trim());
-              },
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white
-              ),
-              child: const Text("Accedi"),
-            ),*/
           ],
         ),
       ),

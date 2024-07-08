@@ -93,6 +93,8 @@ class _MyLoginActivityState extends State<MyLoginActivity> {
                         context
                     )) {
                       Navigator.push(context, MaterialPageRoute(builder: (c)=> const MainActivity()));
+                      emailTextEditController.text = "";
+                      passwordTextEditController.text = "";
                     }
                   },
                   style: ElevatedButton.styleFrom(

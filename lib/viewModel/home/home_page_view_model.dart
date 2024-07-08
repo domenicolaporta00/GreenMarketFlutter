@@ -1,6 +1,9 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+
+import '../../model/prodotto.dart';
 
 class HomePageViewModel extends ChangeNotifier {
 
@@ -16,6 +19,9 @@ class HomePageViewModel extends ChangeNotifier {
   Color _colore = Colors.red;
   Color get colore => _colore;
 
+  List<Prodotto> _listaProdotti = [];
+  List<Prodotto> get listaProdotti => _listaProdotti;
+
   getNome() {
     String name = "Domenico";
     _nome = name;
@@ -24,6 +30,36 @@ class HomePageViewModel extends ChangeNotifier {
 
   setNome(String nome) {
     _nome = nome;
+    notifyListeners();
+  }
+
+  getProdottiRandom() {
+    List<Prodotto> prodotti = [
+      Prodotto(nome: "Mele", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
+      Prodotto(nome: "Pere", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
+      Prodotto(nome: "Banane", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
+      Prodotto(nome: "Mele2", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
+      Prodotto(nome: "Pere2", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
+      Prodotto(nome: "Banane2", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
+      Prodotto(nome: "Mele3", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
+      Prodotto(nome: "Pere3", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
+      Prodotto(nome: "Banane3", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
+      Prodotto(nome: "Mele4", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
+      Prodotto(nome: "Pere4", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
+      Prodotto(nome: "Banane4", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
+      Prodotto(nome: "Mele5", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
+      Prodotto(nome: "Pere5", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
+      Prodotto(nome: "Banane5", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg")
+    ];
+    List<Prodotto> prodRand = [];
+    Random rand = Random();
+    while(prodRand.length < 3) {
+      int randomIndex = rand.nextInt(prodotti.length);
+      if(!prodRand.contains(prodotti[randomIndex])) {
+        prodRand.add(prodotti[randomIndex]);
+      }
+    }
+    _listaProdotti = prodRand;
     notifyListeners();
   }
 

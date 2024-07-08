@@ -23,7 +23,7 @@ class _ConfermaOrdineState extends State<ConfermaOrdine> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final confermaOrdineViewModel = Provider.of<ConfermaOrdineViewModel>(context, listen: false);
-      final listaSpesaViewModel = Provider.of<ListaSpesaViewModel>(context, listen: false);
+      Provider.of<ListaSpesaViewModel>(context, listen: false);
       confermaOrdineViewModel.getIndirizzo();
     });
   }
