@@ -53,7 +53,7 @@ class HomePageViewModel extends ChangeNotifier {
     ];
     List<Prodotto> prodRand = [];
     Random rand = Random();
-    while(prodRand.length < 3) {
+    while(prodRand.length < 6) {
       int randomIndex = rand.nextInt(prodotti.length);
       if(!prodRand.contains(prodotti[randomIndex])) {
         prodRand.add(prodotti[randomIndex]);

@@ -95,10 +95,14 @@ class _HomePageCardState extends State<HomePageCard> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 250,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // Numero di colonne
+                  mainAxisSpacing: 8.0, // Spaziatura verticale tra gli elementi
+                  crossAxisSpacing: 8.0, // Spaziatura orizzontale tra gli elementi
+                  childAspectRatio: 0.75, // Rapporto d'aspetto per ogni elemento (puoi regolarlo come necessario)
+                ),
                 itemCount: homeViewModel.listaProdotti.length,
                 itemBuilder: (context, index) {
                   final prodotto = homeViewModel.listaProdotti[index];
@@ -117,15 +121,12 @@ class _HomePageCardState extends State<HomePageCard> {
                           );
                         },
                         child: SizedBox(
-                          width: 200,
                           child: Center(
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 Image.asset(
                                   prodotto.foto,
-                                  height: 180,
-                                  width: 180,
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
