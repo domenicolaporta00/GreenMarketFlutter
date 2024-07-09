@@ -39,13 +39,25 @@ class ListaSpesaViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getProdottoByNome(String nome) {
+  getProdottoByNome(ProdottoInListaModel prod) {
     List<Prodotto> prodotti = [
-      Prodotto(nome: "Mele", descrizione: "Sono mele", prezzo: 2.0, foto: ""),
-      Prodotto(nome: "Pere", descrizione: "Sono pere", prezzo: 2.5, foto: ""),
-      Prodotto(nome: "Banane", descrizione: "Sono banane", prezzo: 1.0, foto: "")
+      Prodotto(nome: "Mele", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
+      Prodotto(nome: "Pere", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
+      Prodotto(nome: "Banane", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
+      Prodotto(nome: "Mele2", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
+      Prodotto(nome: "Pere2", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
+      Prodotto(nome: "Banane2", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
+      Prodotto(nome: "Mele3", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
+      Prodotto(nome: "Pere3", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
+      Prodotto(nome: "Banane3", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
+      Prodotto(nome: "Mele4", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
+      Prodotto(nome: "Pere4", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
+      Prodotto(nome: "Banane4", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
+      Prodotto(nome: "Mele5", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
+      Prodotto(nome: "Pere5", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
+      Prodotto(nome: "Banane5", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg")
     ];
-    _prodottoDettagliato = prodotti.firstWhere((p)=>p.nome == nome);
+    _prodottoDettagliato = prodotti.firstWhere((p)=>p.nome == prod.nome);
     notifyListeners();
   }
 

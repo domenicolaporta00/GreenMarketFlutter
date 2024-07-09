@@ -3,6 +3,8 @@ import 'package:green_market_flutter/view/conferma_ordine.dart';
 import 'package:green_market_flutter/viewModel/home/lista_spesa_view_model.dart';
 import 'package:provider/provider.dart';
 
+import '../dettaglio_prodotto.dart';
+
 class ListaSpesaCard extends StatefulWidget {
   const ListaSpesaCard({super.key});
 
@@ -46,12 +48,15 @@ class _ListaSpesaCardState extends State<ListaSpesaCard> {
                       child: ListTile(
                         onTap: () {
                           //ricercaViewModel.showSnackBar("Cliccato ${prodotto.nome}", context);
-                          /*Navigator.push(
+                          listaSpesaViewModel.getProdottoByNome(prodottoInLista);
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DettaglioProdotto(prodotto: prodotto)
+                                builder: (context) => DettaglioProdotto(
+                                    prodotto: listaSpesaViewModel.prodottoDettagliato
+                                )
                             ),
-                          );*/
+                          );
                         },
                         title: Text("${prodottoInLista.nome} €${prodottoInLista.prezzo}" ),
                         subtitle: Column(
