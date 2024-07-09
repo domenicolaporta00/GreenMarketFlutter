@@ -135,7 +135,10 @@ class _DettaglioProdottoState extends State<DettaglioProdotto> {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: (){},
+        onPressed: (){
+          dettaglioProdottoViewModel.addProdottoInLista(widget.prodotto, context);
+          Navigator.pop(context);
+        },
         child: const Icon((Icons.add_shopping_cart)),
       ),
     );
