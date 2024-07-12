@@ -24,7 +24,7 @@ class _ProfiloCardState extends State<ProfiloCard> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final profiloViewModel = Provider.of<ProfiloViewModel>(context, listen: false);
       Provider.of<HomePageViewModel>(context, listen: false);
-      profiloViewModel.getDati();
+      profiloViewModel.loadUserData();
     });
   }
 
@@ -32,6 +32,7 @@ class _ProfiloCardState extends State<ProfiloCard> {
   Widget build(BuildContext context) {
     final profiloViewModel = Provider.of<ProfiloViewModel>(context);
     final homeViewModel = Provider.of<HomePageViewModel>(context);
+    //Assegnamento dei valori dell'utente dal viewModel
     nomeTextEditController.text = profiloViewModel.nome;
     cognomeTextEditController.text = profiloViewModel.cognome;
     indirizzoTextEditController.text = profiloViewModel.indirizzo;
@@ -97,8 +98,7 @@ class _ProfiloCardState extends State<ProfiloCard> {
                 children: [
                   ElevatedButton(
                     onPressed: (){
-                      homeViewModel.setNome(nomeTextEditController.text.trim());
-                      profiloViewModel.setDati(
+                      profiloViewModel.updateUser(
                           nomeTextEditController.text.trim(),
                           cognomeTextEditController.text.trim(),
                           indirizzoTextEditController.text.trim(),
@@ -113,7 +113,7 @@ class _ProfiloCardState extends State<ProfiloCard> {
                   ),
                   ElevatedButton(
                     onPressed: (){
-                      profiloViewModel.getDati();
+                      profiloViewModel.loadUserData();
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,

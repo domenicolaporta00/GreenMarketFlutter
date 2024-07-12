@@ -86,8 +86,8 @@ class _MyLoginActivityState extends State<MyLoginActivity> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: (){
-                    if(loginViewModel.effettuaLogin(
+                  onPressed: () async {
+                    if(await loginViewModel.effettuaLogin(
                         emailTextEditController.text.trim(),
                         passwordTextEditController.text.trim(),
                         context

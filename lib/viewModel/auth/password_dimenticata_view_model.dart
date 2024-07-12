@@ -1,10 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../../services/auth.dart';
 
 class PasswordDimenticataViewModel{
 
   final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+  final Auth auth = Auth();
   
-  recuperaPassword(String email, BuildContext context) {
+  Future<bool> recuperaPassword(String email, BuildContext context) async {
     if(email.isEmpty) {
       showSnackBar("Inserire un'email!", context);
       return false;
@@ -16,8 +20,19 @@ class PasswordDimenticataViewModel{
       }
       else {
         //recupero password
-        showSnackBar("Email inviata", context);
-        return true;
+        try {
+          await auth.sendPasswordResetEmail(email);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Email per il recupero password inviata')),
+          );
+          return true;
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${e.toString()}')),
+          );
+          return false;
+        }
+
       }
     }
   }

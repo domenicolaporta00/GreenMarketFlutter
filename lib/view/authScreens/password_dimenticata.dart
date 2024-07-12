@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:green_market_flutter/viewModel/auth/password_dimenticata_view_model.dart';
 
@@ -12,7 +13,6 @@ class PasswordDimenticataActivity extends StatefulWidget {
 }
 
 class _PasswordDimenticataActivityState extends State<PasswordDimenticataActivity> {
-
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   TextEditingController emailTextEditController = TextEditingController();
   PasswordDimenticataViewModel passwordDimenticataViewModel = PasswordDimenticataViewModel();
@@ -37,12 +37,15 @@ class _PasswordDimenticataActivityState extends State<PasswordDimenticataActivit
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  "Inserisci l'indirizzo email associato al tuo account",
-                  style: TextStyle(
-                    color: Colors.black38,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
+                const Center(
+                  child: Text(
+                    "Inserisci l'indirizzo email associato al tuo account",
+                    style: TextStyle(
+                      color: Colors.black38,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                    ),
+                    textAlign: TextAlign.center, // Centrare il testo all'interno del widget
                   ),
                 ),
                 Form(
@@ -61,8 +64,8 @@ class _PasswordDimenticataActivityState extends State<PasswordDimenticataActivit
                   ),
                 ),
                 ElevatedButton(
-                    onPressed: (){
-                      if(passwordDimenticataViewModel.recuperaPassword(
+                    onPressed: () async {
+                      if(await passwordDimenticataViewModel.recuperaPassword(
                         emailTextEditController.text.trim(),
                         context
                       )) {

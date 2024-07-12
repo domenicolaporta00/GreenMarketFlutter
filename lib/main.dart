@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:green_market_flutter/viewModel/conferma_ordine_view_model.dart';
 import 'package:green_market_flutter/viewModel/dettaglio_prodotto_view_model.dart';
@@ -17,6 +18,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
+  );
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
   );
   runApp(
     MultiProvider(
@@ -61,4 +65,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

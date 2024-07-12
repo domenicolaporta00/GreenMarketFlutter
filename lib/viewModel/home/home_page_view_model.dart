@@ -1,9 +1,12 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../model/prodotto.dart';
+import '../../model/user_model.dart';
+import '../../services/database_service.dart';
 
 class HomePageViewModel extends ChangeNotifier {
 
@@ -22,14 +25,13 @@ class HomePageViewModel extends ChangeNotifier {
   List<Prodotto> _listaProdotti = [];
   List<Prodotto> get listaProdotti => _listaProdotti;
 
-  getNome() {
-    String name = "Domenico";
-    _nome = name;
-    notifyListeners();
-  }
-
-  setNome(String nome) {
-    _nome = nome;
+  Future<void> getNome() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      DatabaseService databaseService = DatabaseService(uid: currentUser.uid);
+      UserModel? userData = await databaseService.getUser();
+      _nome = userData!.nome;
+    }
     notifyListeners();
   }
 

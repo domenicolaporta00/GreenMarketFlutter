@@ -135,9 +135,9 @@ class _RegisterActivityState extends State<RegisterActivity> {
                   ],
                 ),
                 ElevatedButton(
-                    onPressed: (){
+                    onPressed: () async {
                       if(isChecked) {
-                        if(registrazioneViewModel.effettuaRegistrazione(
+                        if(await registrazioneViewModel.effettuaRegistrazione(
                             nomeTextEditController.text.trim(),
                             cognomeTextEditController.text.trim(),
                             indirizzoTextEditController.text.trim(),
