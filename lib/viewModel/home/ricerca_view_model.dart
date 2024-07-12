@@ -17,7 +17,7 @@ class RicercaViewModel extends ChangeNotifier {
   Future<List<ProductModel>> getProdotti() async {
     try {
       // Recupera la raccolta 'product' da Firestore
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('product').get();
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('products').get();
 
       // Converte ogni documento in un oggetto ProdottoModel
       List<ProductModel> prodotti = querySnapshot.docs.map((doc) {
@@ -32,36 +32,33 @@ class RicercaViewModel extends ChangeNotifier {
     }
   }
 
-  getProdottoByNome(String nome, BuildContext context) {
-    List<ProductModel> prodotti = [
-      ProductModel(nome: "Mele", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      ProductModel(nome: "Pere", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      ProductModel(nome: "Banane", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      ProductModel(nome: "Mele2", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      ProductModel(nome: "Pere2", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      ProductModel(nome: "Banane2", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      ProductModel(nome: "Mele3", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      ProductModel(nome: "Pere3", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      ProductModel(nome: "Banane3", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      ProductModel(nome: "Mele4", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      ProductModel(nome: "Pere4", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      ProductModel(nome: "Banane4", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      ProductModel(nome: "Mele5", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      ProductModel(nome: "Pere5", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      ProductModel(nome: "Banane5", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg")
-    ];
+  /*getProdottoByNome(String nome, BuildContext context) {
     nome = nome[0].toUpperCase() + nome.substring(1).toLowerCase();
     ProductModel placeholder = ProductModel(nome: "", descrizione: "", prezzo: 0.0, foto: "");
-    var prodotto = prodotti.firstWhere(
+    var prodotto = _listaProdotti?.firstWhere(
           (p) => p.nome == nome, orElse: () => placeholder,
     );
     if (prodotto != placeholder) {
-      _listaProdotti = [prodotto];
+      _listaProdotti = [prodotto!];
     } else {
       showSnackBar("Non ci sono prodotti con questo nome", context);
       getProdotti();
     }
     notifyListeners();
+  }*/
+
+  Future<List<ProductModel>> getProdottoByNome({String? nome}) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('products').get();
+
+    List<ProductModel> prodotti = querySnapshot.docs.map((doc) {
+      return ProductModel.fromFirestore(doc as Map<String, dynamic>);
+    }).toList();
+
+    if (nome != null && nome.isNotEmpty) {
+      prodotti = prodotti.where((prodotto) => prodotto.nome.toLowerCase().contains(nome.toLowerCase())).toList();
+    }
+
+    return prodotti;
   }
 
   readProdottoDettagliato(String nome) {
