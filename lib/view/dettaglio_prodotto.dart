@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:green_market_flutter/model/prodotto.dart';
+import 'package:green_market_flutter/model/product_model.dart';
 import 'package:green_market_flutter/viewModel/dettaglio_prodotto_view_model.dart';
 import 'package:provider/provider.dart';
 
 class DettaglioProdotto extends StatefulWidget {
-  final Prodotto prodotto;
+  final ProductModel prodotto;
 
   const DettaglioProdotto({super.key, required this.prodotto});
 

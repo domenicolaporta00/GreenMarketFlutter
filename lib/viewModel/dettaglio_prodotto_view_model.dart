@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:green_market_flutter/model/prodotto.dart';
+import 'package:green_market_flutter/model/product_model.dart';
 import 'package:green_market_flutter/model/prodotto_in_lista_model.dart';
 
 class DettaglioProdottoViewModel extends ChangeNotifier{
@@ -34,7 +34,7 @@ class DettaglioProdottoViewModel extends ChangeNotifier{
     notifyListeners();
   }
 
-  addProdottoInLista(Prodotto prodotto, BuildContext context) {
+  addProdottoInLista(ProductModel prodotto, BuildContext context) {
     ProdottoInListaModel prodInLista = ProdottoInListaModel(
         nome: prodotto.nome,
         quantita: _quantita,

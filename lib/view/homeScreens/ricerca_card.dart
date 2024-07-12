@@ -20,7 +20,7 @@ class _RicercaCardState extends State<RicercaCard> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final ricercaViewModel = Provider.of<RicercaViewModel>(context, listen: false);
-      ricercaViewModel.getListaProdotti();
+      ricercaViewModel.getProdotti();
     });
   }
 
@@ -35,9 +35,9 @@ class _RicercaCardState extends State<RicercaCard> {
           children: [
             Expanded(
               child: ListView.builder(
-                itemCount: ricercaViewModel.listaProdotti.length,
+                itemCount: ricercaViewModel.listaProdotti?.length,
                 itemBuilder: (context, index) {
-                  final prodotto = ricercaViewModel.listaProdotti[index];
+                  final prodotto = ricercaViewModel.listaProdotti?[index];
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
                     child: Container(
@@ -51,11 +51,11 @@ class _RicercaCardState extends State<RicercaCard> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => DettaglioProdotto(prodotto: prodotto)
+                                builder: (context) => DettaglioProdotto(prodotto: prodotto)
                             ),
                           );
                         },
-                        title: Text(prodotto.nome),
+                        title: Text(prodotto!.nome),
                         subtitle: Text("€${prodotto.prezzo}"),
                         leading: Container(
                           width: 50,
@@ -120,7 +120,7 @@ class _RicercaCardState extends State<RicercaCard> {
                   const SizedBox(width: 8.0),
                   FloatingActionButton(
                     onPressed: () {
-                      ricercaViewModel.getListaProdotti();
+                      ricercaViewModel.getProdotti();
                       ricercaTextEditController.text = "";
                     },
                     child: const Icon(Icons.delete),

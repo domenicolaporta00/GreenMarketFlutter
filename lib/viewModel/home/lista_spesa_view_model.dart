@@ -1,4 +1,4 @@
-import 'package:green_market_flutter/model/prodotto.dart';
+import 'package:green_market_flutter/model/product_model.dart';
 import 'package:green_market_flutter/model/prodotto_in_lista_model.dart';
 import 'package:flutter/material.dart';
 
@@ -10,8 +10,8 @@ class ListaSpesaViewModel extends ChangeNotifier {
   List<ProdottoInListaModel> _listaProdotti = [];
   List<ProdottoInListaModel> get listaProdotti => _listaProdotti;
 
-  Prodotto _prodottoDettagliato = Prodotto(nome: "", descrizione: "", prezzo: 0.0, foto: "");
-  Prodotto get prodottoDettagliato => _prodottoDettagliato;
+  ProductModel _prodottoDettagliato = ProductModel(nome: "", descrizione: "", prezzo: 0.0, foto: "");
+  ProductModel get prodottoDettagliato => _prodottoDettagliato;
 
   double _totale = 0.0;
   double get totale => _totale;
@@ -40,22 +40,22 @@ class ListaSpesaViewModel extends ChangeNotifier {
   }
 
   getProdottoByNome(ProdottoInListaModel prod) {
-    List<Prodotto> prodotti = [
-      Prodotto(nome: "Mele", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      Prodotto(nome: "Pere", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      Prodotto(nome: "Banane", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      Prodotto(nome: "Mele2", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      Prodotto(nome: "Pere2", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      Prodotto(nome: "Banane2", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      Prodotto(nome: "Mele3", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      Prodotto(nome: "Pere3", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      Prodotto(nome: "Banane3", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      Prodotto(nome: "Mele4", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      Prodotto(nome: "Pere4", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      Prodotto(nome: "Banane4", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      Prodotto(nome: "Mele5", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      Prodotto(nome: "Pere5", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      Prodotto(nome: "Banane5", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg")
+    List<ProductModel> prodotti = [
+      ProductModel(nome: "Mele", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
+      ProductModel(nome: "Pere", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
+      ProductModel(nome: "Banane", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
+      ProductModel(nome: "Mele2", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
+      ProductModel(nome: "Pere2", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
+      ProductModel(nome: "Banane2", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
+      ProductModel(nome: "Mele3", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
+      ProductModel(nome: "Pere3", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
+      ProductModel(nome: "Banane3", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
+      ProductModel(nome: "Mele4", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
+      ProductModel(nome: "Pere4", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
+      ProductModel(nome: "Banane4", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
+      ProductModel(nome: "Mele5", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
+      ProductModel(nome: "Pere5", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
+      ProductModel(nome: "Banane5", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg")
     ];
     _prodottoDettagliato = prodotti.firstWhere((p)=>p.nome == prod.nome);
     notifyListeners();
