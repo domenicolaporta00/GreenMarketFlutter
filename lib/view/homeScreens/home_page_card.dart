@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:green_market_flutter/viewModel/home/home_page_view_model.dart';
 import 'package:provider/provider.dart';
 
+import '../../model/product_model.dart';
 import '../dettaglio_prodotto.dart';
 
 class HomePageCard extends StatefulWidget {
@@ -12,8 +13,11 @@ class HomePageCard extends StatefulWidget {
 }
 
 class _HomePageCardState extends State<HomePageCard> {
-
   TextEditingController emailTextEditController = TextEditingController();
+  //Ho inizializzato futureProdotti con un Future vuoto perchè stavo tendando di assegnargli un valore
+  //all'interno di un callback (addPostFrameCallback), ma il widget potrebbe essere costruito prima
+  // che il callback venga eseguito, causando così l'errore
+  late Future<List<ProductModel>> futureProdotti = Future.value([]);
 
   @override
   void initState() {
@@ -22,7 +26,9 @@ class _HomePageCardState extends State<HomePageCard> {
       final homePageViewModel = Provider.of<HomePageViewModel>(context, listen: false);
       homePageViewModel.getNome();
       homePageViewModel.updateStatus();
-      homePageViewModel.getProdottiRandom();
+      setState(() {
+        futureProdotti = homePageViewModel.getProdottiRandom();
+      });
     });
   }
 
@@ -95,16 +101,25 @@ class _HomePageCardState extends State<HomePageCard> {
               ),
             ),
             Expanded(
-              child: GridView.builder(
+              child: FutureBuilder<List<ProductModel>>(
+                future: futureProdotti,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (snapshot.hasData) {
+                    final items = snapshot.data!;
+                    return GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, // Numero di colonne
                   mainAxisSpacing: 8.0, // Spaziatura verticale tra gli elementi
                   crossAxisSpacing: 8.0, // Spaziatura orizzontale tra gli elementi
                   childAspectRatio: 0.75, // Rapporto d'aspetto per ogni elemento (puoi regolarlo come necessario)
                 ),
-                itemCount: homeViewModel.listaProdotti.length,
+                itemCount: items.length,
                 itemBuilder: (context, index) {
-                  final prodotto = homeViewModel.listaProdotti[index];
+                  final prodotto = items[index];
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Card(
@@ -124,7 +139,7 @@ class _HomePageCardState extends State<HomePageCard> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Image.asset(
+                                Image.network(
                                   prodotto.foto,
                                 ),
                                 Row(
@@ -152,8 +167,13 @@ class _HomePageCardState extends State<HomePageCard> {
                     ),
                   );
                 },
-              ),
-            )
+              );
+                  } else {
+                    return const Center(child: Text('No data'));
+                  }
+                },
+            ),
+            ),
           ],
         ),
       ),

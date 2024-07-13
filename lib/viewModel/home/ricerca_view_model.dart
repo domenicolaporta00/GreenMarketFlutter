@@ -1,3 +1,6 @@
+import 'dart:core';
+import 'dart:core';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,10 +11,10 @@ import '../../services/database_service.dart';
 class RicercaViewModel extends ChangeNotifier {
 
 
-  List<ProductModel>? _listaProdotti = [];
+  final List<ProductModel> _listaProdotti = [];
   List<ProductModel>? get listaProdotti => _listaProdotti;
 
-  ProductModel _prodottoDettagliato = ProductModel(nome: "", descrizione: "", prezzo: 0.0, foto: "");
+  final ProductModel _prodottoDettagliato = ProductModel(nome: "", descrizione: "", prezzo: 0.0, foto: "");
   ProductModel get prodottoDettagliato => _prodottoDettagliato;
 
   Future<List<ProductModel>> getProdotti() async {
@@ -22,7 +25,7 @@ class RicercaViewModel extends ChangeNotifier {
       // Converte ogni documento in un oggetto ProdottoModel
       List<ProductModel> prodotti = querySnapshot.docs.map((doc) {
         // Usa il metodo fromFirestore per convertire la mappa in un oggetto ProdottoModel
-        return ProductModel.fromFirestore(doc.data() as Map<String, dynamic>);
+        return ProductModel.fromDocument(doc);
       }).toList();
 
       return prodotti;
@@ -32,57 +35,39 @@ class RicercaViewModel extends ChangeNotifier {
     }
   }
 
-  /*getProdottoByNome(String nome, BuildContext context) {
-    nome = nome[0].toUpperCase() + nome.substring(1).toLowerCase();
-    ProductModel placeholder = ProductModel(nome: "", descrizione: "", prezzo: 0.0, foto: "");
-    var prodotto = _listaProdotti?.firstWhere(
-          (p) => p.nome == nome, orElse: () => placeholder,
-    );
-    if (prodotto != placeholder) {
-      _listaProdotti = [prodotto!];
+  Future<List<ProductModel>> getProdottoByNome({required String nome}) async {
+    nome = stringaFormattata(nome);
+    if (nome.isNotEmpty) {
+      try {
+        final productDoc = await FirebaseFirestore.instance
+            .collection('products')
+            .doc(nome)
+            .get();
+
+        if (productDoc.exists) {
+          ProductModel product = ProductModel.fromDocument(productDoc);
+          return [product];
+        } else {
+          print("Prodotto non trovato");
+          return [];
+        }
+      } catch (e) {
+        print("Errore nella ricerca del prodotto: $e");
+        return [];
+      }
     } else {
-      showSnackBar("Non ci sono prodotti con questo nome", context);
-      getProdotti();
+      print("Inserisci il nome di un prodotto");
+      return [];
     }
-    notifyListeners();
-  }*/
-
-  Future<List<ProductModel>> getProdottoByNome({String? nome}) async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('products').get();
-
-    List<ProductModel> prodotti = querySnapshot.docs.map((doc) {
-      return ProductModel.fromFirestore(doc as Map<String, dynamic>);
-    }).toList();
-
-    if (nome != null && nome.isNotEmpty) {
-      prodotti = prodotti.where((prodotto) => prodotto.nome.toLowerCase().contains(nome.toLowerCase())).toList();
-    }
-
-    return prodotti;
   }
 
-  readProdottoDettagliato(String nome) {
-    List<ProductModel> prodotti = [
-      ProductModel(nome: "Mele", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      ProductModel(nome: "Pere", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      ProductModel(nome: "Banane", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      ProductModel(nome: "Mele2", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      ProductModel(nome: "Pere2", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      ProductModel(nome: "Banane2", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      ProductModel(nome: "Mele3", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      ProductModel(nome: "Pere3", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      ProductModel(nome: "Banane3", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      ProductModel(nome: "Mele4", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      ProductModel(nome: "Pere4", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      ProductModel(nome: "Banane4", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      ProductModel(nome: "Mele5", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      ProductModel(nome: "Pere5", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      ProductModel(nome: "Banane5", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg")
-    ];
-    _prodottoDettagliato = prodotti.firstWhere((p)=>p.nome == nome);
-    notifyListeners();
+  stringaFormattata(String nome){
+    if (nome.isEmpty) {
+      return '';
+    }else{
+      return '${nome[0].toUpperCase()}${nome.substring(1).toLowerCase()}';
+    }
   }
-
 
   showSnackBar(String message, BuildContext context) {
     final snackBar = SnackBar(content: Text(message));

@@ -33,14 +33,12 @@ class _RicercaCardState extends State<RicercaCard> {
     });
   }
 
-  /*@override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+  void deleteProdottoInserito(){
+    setState(() {
       final ricercaViewModel = Provider.of<RicercaViewModel>(context, listen: false);
-      ricercaViewModel.getProdotti();
+      futureProdotti = ricercaViewModel.getProdotti();
     });
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +62,6 @@ class _RicercaCardState extends State<RicercaCard> {
                     return ListView.builder(
                       itemCount: items.length,
                       itemBuilder: (context, index) {
-                        //final prodotto = ricercaViewModel.listaProdotti?[index];
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
                           child: Container(
@@ -74,7 +71,6 @@ class _RicercaCardState extends State<RicercaCard> {
                             ),
                             child: ListTile(
                               onTap: () {
-                                //ricercaViewModel.showSnackBar("Cliccato ${prodotto.nome}", context);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -104,7 +100,7 @@ class _RicercaCardState extends State<RicercaCard> {
                                     items[index].foto,
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) {
-                                      return Icon(Icons.broken_image, size: 50);
+                                      return const Icon(Icons.broken_image, size: 50);
                                     },
                                     loadingBuilder: (context, child, loadingProgress) {
                                       if (loadingProgress == null) return child;
@@ -156,7 +152,6 @@ class _RicercaCardState extends State<RicercaCard> {
                         ),
                         suffixIcon: GestureDetector(
                           onTap: () {
-                            String nomeProdotto = ricercaTextEditController.text.trim();
                             searchProdotti();
                           },
                           child: const Icon(Icons.search),
@@ -167,7 +162,7 @@ class _RicercaCardState extends State<RicercaCard> {
                   const SizedBox(width: 8.0),
                   FloatingActionButton(
                     onPressed: () {
-                      ricercaViewModel.getProdotti();
+                      deleteProdottoInserito();
                       ricercaTextEditController.text = "";
                     },
                     child: const Icon(Icons.delete),
