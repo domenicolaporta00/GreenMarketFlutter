@@ -5,6 +5,7 @@ import 'package:green_market_flutter/viewModel/home/ricerca_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../model/product_model.dart';
+import '../../viewModel/dettaglio_prodotto_view_model.dart';
 
 
 class RicercaCard extends StatefulWidget {
@@ -26,13 +27,15 @@ class _RicercaCardState extends State<RicercaCard> {
     futureProdotti = ricercaViewModel.getProdotti();
   }
 
-  void searchProdotti() {
+  //Utilizzato per cambiare il valore della lista dei prodotti quando viene eseguita una ricerca
+  void searchProdotti(BuildContext context) {
     setState(() {
       final ricercaViewModel = Provider.of<RicercaViewModel>(context, listen: false);
-      futureProdotti = ricercaViewModel.getProdottoByNome(nome: ricercaTextEditController.text.trim());
+      futureProdotti = ricercaViewModel.getProdottoByNome(nome: ricercaTextEditController.text.trim(), context: context);
     });
   }
 
+  //Serve per ritornare la lista completa dei prodotti una volta che l'utente cancella quanto inserito
   void deleteProdottoInserito(){
     setState(() {
       final ricercaViewModel = Provider.of<RicercaViewModel>(context, listen: false);
@@ -43,6 +46,7 @@ class _RicercaCardState extends State<RicercaCard> {
   @override
   Widget build(BuildContext context) {
     final ricercaViewModel = Provider.of<RicercaViewModel>(context);
+    final dettaglioProdottoViewModel = Provider.of<DettaglioProdottoViewModel>(context);
 
     return Card(
       shadowColor: Colors.transparent,
@@ -71,6 +75,7 @@ class _RicercaCardState extends State<RicercaCard> {
                             ),
                             child: ListTile(
                               onTap: () {
+                                dettaglioProdottoViewModel.setQuantita(0.5);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -152,7 +157,11 @@ class _RicercaCardState extends State<RicercaCard> {
                         ),
                         suffixIcon: GestureDetector(
                           onTap: () {
-                            searchProdotti();
+                            if(ricercaTextEditController.text.trim() == ''){
+                              ricercaViewModel.showSnackBar("Inserisci il nome di un prodotto", context);
+                            }else{
+                              searchProdotti(context);
+                            }
                           },
                           child: const Icon(Icons.search),
                         ),
@@ -162,8 +171,12 @@ class _RicercaCardState extends State<RicercaCard> {
                   const SizedBox(width: 8.0),
                   FloatingActionButton(
                     onPressed: () {
-                      deleteProdottoInserito();
-                      ricercaTextEditController.text = "";
+                      if(ricercaTextEditController.text == ''){
+                        ricercaViewModel.showSnackBar("Non hai inserito alcun prodotto", context);
+                      }else{
+                        deleteProdottoInserito();
+                        ricercaTextEditController.text = '';
+                      }
                     },
                     child: const Icon(Icons.delete),
                   ),

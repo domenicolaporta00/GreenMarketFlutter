@@ -1,13 +1,22 @@
+import 'dart:ffi';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:green_market_flutter/model/product_model.dart';
-import 'package:green_market_flutter/model/prodotto_in_lista_model.dart';
+import 'package:green_market_flutter/model/product_in_shopping_list_model.dart';
 
-class DettaglioProdottoViewModel extends ChangeNotifier{
+import '../model/user_model.dart';
+import '../services/database_service.dart';
+
+class DettaglioProdottoViewModel extends ChangeNotifier {
+  User? currentUser = FirebaseAuth.instance.currentUser;
 
   double _quantita = 0.5;
+
   double get quantita => _quantita;
 
-  List<ProdottoInListaModel> lista = [];
+  List<ProductInShoppingList> lista = [];
 
   setQuantita(double quantita) {
     _quantita = quantita;
@@ -15,7 +24,7 @@ class DettaglioProdottoViewModel extends ChangeNotifier{
   }
 
   incrementaQuantita(BuildContext context) {
-    if(_quantita<100) {
+    if (_quantita < 100) {
       _quantita = _quantita + 0.5;
     }
     else {
@@ -25,7 +34,7 @@ class DettaglioProdottoViewModel extends ChangeNotifier{
   }
 
   decrementaQuantita(BuildContext context) {
-    if(_quantita>0.5) {
+    if (_quantita > 0.5) {
       _quantita = _quantita - 0.5;
     }
     else {
@@ -34,30 +43,54 @@ class DettaglioProdottoViewModel extends ChangeNotifier{
     notifyListeners();
   }
 
-  addProdottoInLista(ProductModel prodotto, BuildContext context) {
-    ProdottoInListaModel prodInLista = ProdottoInListaModel(
-        nome: prodotto.nome,
-        quantita: _quantita,
-        prezzo: prodotto.prezzo,
-        prezzoTotale: _quantita*prodotto.prezzo
+  //Metodo che gestisce l'inserimento di un prodotto nella lista della spesa
+  Future<void> addProductToShoppingList(ProductModel prodotto, BuildContext context) async {
+    final DocumentReference userDoc = FirebaseFirestore.instance.collection('users').doc(currentUser?.uid);
+
+    late final CollectionReference<UserModel> userRef = FirebaseFirestore.instance.collection("users").withConverter<UserModel>(
+      fromFirestore: (snapshot, _) => UserModel.fromJson(snapshot.data()!),
+      toFirestore: (user, _) => user.toJson(),
     );
-    if(contains(prodInLista)) {
-      lista.removeWhere((p) => p.nome == prodInLista.nome);
-    }
-    lista.add(prodInLista);
-    for(var i in lista) {
-      showSnackBar("${i.nome} ${i.prezzo} ${i.quantita} ${i.prezzoTotale}", context);
+    DocumentSnapshot<UserModel> user = await userRef.doc(currentUser?.uid).get();
+
+    if (currentUser?.uid != null) {
+      if (user.data() != null) {
+        // Inizializzare la mappa se è null
+        Map<String, List<double>> listaDellaSpesa = user.data()?.listaDellaSpesa ?? {};
+
+        //Lista della spesa aggiornata
+        listaDellaSpesa = aggiungiProdotto(listaDellaSpesa, prodotto.nome, quantita, prodotto.prezzo, quantita * prodotto.prezzo);
+
+        //Carichiamo la lista in firestore
+        await userDoc.update({
+          'listaDellaSpesa': listaDellaSpesa,
+        });
+      } else {
+        showSnackBar("Errore durante nell'inserimento del prodotto nella lista", context);
+      }
+    } else {
+      showSnackBar("Utente non autenticato", context);
     }
   }
 
-  bool contains(ProdottoInListaModel prodotto) {
-    for(var i in lista) {
-      if(prodotto.nome == i.nome) {
-        return true;
-      }
+
+  //Metodo per aggiornare la lista della spesa
+  Map<String, List<double>> aggiungiProdotto(Map<String, List<double>> lista,
+      String prodotto, double quantita, double prezzoAlKg, double prezzo) {
+    //Verifichiamo che il prodotto sia già nella lista
+    if (lista.containsKey(prodotto)) {
+      // Aggiorna la quantità
+      lista[prodotto]![0] = quantita;
+      //Aggiorna il prezzo
+      lista[prodotto]![2] = quantita * prezzoAlKg;
+      return lista;
+    } else {
+      // Aggiunge un nuovo prodotto con quantità e prezzo
+      lista[prodotto] = [quantita, prezzoAlKg, prezzo];
+      return lista;
     }
-    return false;
   }
+
 
   showSnackBar(String message, BuildContext context) {
     final snackBar = SnackBar(content: Text(message));

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:green_market_flutter/viewModel/conferma_ordine_view_model.dart';
 import 'package:green_market_flutter/viewModel/dettaglio_prodotto_view_model.dart';
 import 'package:green_market_flutter/viewModel/home/home_page_view_model.dart';
@@ -22,32 +23,28 @@ void main() async {
   FirebaseFirestore.instance.settings = const Settings(
     persistenceEnabled: true,
   );
+
+  // Imposta l'orientamento dell'app solo in verticale
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (context)=>HomePageViewModel(),
-        ),
-        ChangeNotifierProvider(
-          create: (context)=>RicercaViewModel(),
-        ),
-        ChangeNotifierProvider(
-          create: (context)=>ListaSpesaViewModel(),
-        ),
-        ChangeNotifierProvider(
-          create: (context)=>ProfiloViewModel(),
-        ),
-        ChangeNotifierProvider(
-          create: (context)=>DettaglioProdottoViewModel(),
-        ),
-        ChangeNotifierProvider(
-          create: (context)=>ConfermaOrdineViewModel(),
-        ),
+        ChangeNotifierProvider(create: (context) => HomePageViewModel()),
+        ChangeNotifierProvider(create: (context) => RicercaViewModel()),
+        ChangeNotifierProvider(create: (context) => ListaSpesaViewModel()),
+        ChangeNotifierProvider(create: (context) => ProfiloViewModel()),
+        ChangeNotifierProvider(create: (context) => DettaglioProdottoViewModel()),
+        ChangeNotifierProvider(create: (context) => ConfermaOrdineViewModel()),
       ],
       child: const MyApp(),
     ),
   );
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

@@ -23,8 +23,10 @@ class _ConfermaOrdineState extends State<ConfermaOrdine> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final confermaOrdineViewModel = Provider.of<ConfermaOrdineViewModel>(context, listen: false);
-      Provider.of<ListaSpesaViewModel>(context, listen: false);
       confermaOrdineViewModel.getIndirizzo();
+
+      final listaSpesaViewModel = Provider.of<ListaSpesaViewModel>(context, listen: false);
+      listaSpesaViewModel.getTotale();
     });
   }
 
@@ -99,13 +101,17 @@ class _ConfermaOrdineState extends State<ConfermaOrdine> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
+        onPressed: () async{
           if(indirizzoTextEditController.text.isEmpty) {
             confermaOrdineViewModel.showSnackBar("Inserire un indirizzo", context);
           }
+          else if(indirizzoTextEditController.text.length > 50){
+            confermaOrdineViewModel.showSnackBar("L'indirizzo può contenere max 50 caratteri", context);
+          }
           else {
-            listaSpesaViewModel.deleteListaSpesa();
-            confermaOrdineViewModel.showSnackBar("Acquisto effettuato con successo ${listaSpesaViewModel.listaProdotti}", context);
+            await listaSpesaViewModel.deleteListaSpesa(); // Attendo il completamento
+            listaSpesaViewModel.getListaDellaSpesa(); // Chiamata per riottenere la lista aggiornata
+            confermaOrdineViewModel.showSnackBar("Acquisto effettuato con successo", context);
             Navigator.pop(context);
           }
         },

@@ -13,19 +13,19 @@ class DettaglioProdotto extends StatefulWidget {
 }
 
 class _DettaglioProdottoState extends State<DettaglioProdotto> {
-  /*@override
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
+  @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final dettaglioProdottoViewModel = Provider.of<DettaglioProdottoViewModel>(context, listen: false);
-    });
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
     final dettaglioProdottoViewModel = Provider.of<DettaglioProdottoViewModel>(context);
 
     return Scaffold(
+      key: _scaffoldMessengerKey,
       appBar: AppBar(
         backgroundColor: Colors.green,
         title: const Text("Dettaglio prodotto"),
@@ -44,15 +44,15 @@ class _DettaglioProdottoState extends State<DettaglioProdotto> {
                   width: 200,
                   height: 200,
                   decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 3,
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(16.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 3,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                    borderRadius: BorderRadius.circular(16.0),
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
@@ -81,8 +81,8 @@ class _DettaglioProdottoState extends State<DettaglioProdotto> {
               Text(
                 widget.prodotto.nome,
                 style: const TextStyle(
-                  fontSize: 32.0,
-                  fontWeight: FontWeight.w500
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.w500
                 ),
               ),
               const Text(
@@ -151,7 +151,7 @@ class _DettaglioProdottoState extends State<DettaglioProdotto> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          dettaglioProdottoViewModel.addProdottoInLista(widget.prodotto, context);
+          dettaglioProdottoViewModel.addProductToShoppingList(widget.prodotto, context);
           Navigator.pop(context);
         },
         child: const Icon((Icons.add_shopping_cart)),

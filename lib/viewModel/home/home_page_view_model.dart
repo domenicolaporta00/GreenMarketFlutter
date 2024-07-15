@@ -44,7 +44,7 @@ class HomePageViewModel extends ChangeNotifier {
       // Converte ogni documento in un oggetto ProdottoModel
       List<ProductModel> prodotti = querySnapshot.docs.map((doc) {
         // Usa il metodo fromFirestore per convertire la mappa in un oggetto ProdottoModel
-        return ProductModel.fromFirestore(doc.data() as Map<String, dynamic>);
+        return ProductModel.fromDocument(doc);
       }).toList();
 
       List<ProductModel> prodRand = [];

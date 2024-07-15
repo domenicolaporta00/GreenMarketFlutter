@@ -35,8 +35,8 @@ class RicercaViewModel extends ChangeNotifier {
     }
   }
 
-  Future<List<ProductModel>> getProdottoByNome({required String nome}) async {
-    nome = stringaFormattata(nome);
+  Future<List<ProductModel>> getProdottoByNome({required String nome, required BuildContext context}) async {
+    nome = stringaFormattata(nome, context);
     if (nome.isNotEmpty) {
       try {
         final productDoc = await FirebaseFirestore.instance
@@ -48,7 +48,7 @@ class RicercaViewModel extends ChangeNotifier {
           ProductModel product = ProductModel.fromDocument(productDoc);
           return [product];
         } else {
-          print("Prodotto non trovato");
+          showSnackBar("Prodotto non trovato", context);
           return [];
         }
       } catch (e) {
@@ -56,16 +56,18 @@ class RicercaViewModel extends ChangeNotifier {
         return [];
       }
     } else {
-      print("Inserisci il nome di un prodotto");
-      return [];
+      return _listaProdotti;
     }
   }
 
-  stringaFormattata(String nome){
+  stringaFormattata(String nome, BuildContext context){
     if (nome.isEmpty) {
       return '';
-    }else{
+    } else if (nome.length <= 30) {
       return '${nome[0].toUpperCase()}${nome.substring(1).toLowerCase()}';
+    } else {
+      showSnackBar("Puoi inserire massimo 30 caratteri", context);
+      return '';
     }
   }
 

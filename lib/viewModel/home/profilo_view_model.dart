@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:green_market_flutter/View/authScreens/login.dart';
@@ -7,6 +8,7 @@ import '../../model/user_model.dart';
 import '../../services/database_service.dart';
 
 class ProfiloViewModel extends ChangeNotifier {
+  User? currentUser = FirebaseAuth.instance.currentUser;
 
   String _nome = "";
 
@@ -27,7 +29,7 @@ class ProfiloViewModel extends ChangeNotifier {
   }
 
   void loadUserData() async {
-    User? currentUser = FirebaseAuth.instance.currentUser;
+    final currentUser = this.currentUser;
     if (currentUser != null) {
       DatabaseService databaseService = DatabaseService(uid: currentUser.uid);
       UserModel? userData = await databaseService.getUser();
@@ -40,6 +42,8 @@ class ProfiloViewModel extends ChangeNotifier {
 
   void updateUser(String nome, String cognome, String indirizzo,
       BuildContext context) async {
+    final DocumentReference userDoc = FirebaseFirestore.instance.collection('users').doc(currentUser?.uid);
+
     if (nome == _user?.nome && cognome == _user?.cognome &&
         indirizzo == _user?.indirizzo) {
       showSnackBar("Nessun dato aggiornato", context);
@@ -47,21 +51,20 @@ class ProfiloViewModel extends ChangeNotifier {
     if (nome.isEmpty || cognome.isEmpty || indirizzo.isEmpty) {
       showSnackBar("Completare tutti i campi", context);
     }
-    else {
-      UserModel updatedUser = UserModel(
-        nome: nome,
-        cognome: cognome,
-        indirizzo: indirizzo,
-      );
-      User? currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser != null) {
-        DatabaseService databaseService = DatabaseService(uid: currentUser.uid);
-        await databaseService.updateUser(updatedUser);
-      }
+    else if(limitaCaratteri(nome, cognome, indirizzo)){
+      //Aggiorna l'utente a vuota
+      await userDoc.update({
+        'nome': nome,
+        'cognome': cognome,
+        'indirizzo': indirizzo,
+      });
+
       loadUserData();
-      _user = updatedUser;
       showSnackBar("$_nome Dati aggiornati con successo", context);
       notifyListeners();
+    }
+    else {
+      showSnackBar("I campi possono contere max 30 caratteri", context);
     }
   }
 
@@ -77,26 +80,14 @@ class ProfiloViewModel extends ChangeNotifier {
     }
   }
 
-
-
-
-  /*
-  setDati(String nome, String cognome, String indirizzo, BuildContext context) {
-    if(nome == _nome && cognome == _cognome && indirizzo == _indirizzo) {
-      showSnackBar("Nessun dato aggiornato", context);
-    }
-    if(nome.isEmpty || cognome.isEmpty || indirizzo.isEmpty) {
-      showSnackBar("Completare tutti i campi", context);
-    }
-    else {
-      _nome = nome;
-      _cognome = cognome;
-      _indirizzo = indirizzo;
-      showSnackBar("$_nome Dati aggiornati con successo", context);
-      notifyListeners();
+  //Metodo per limitare i caratteri inseriti dall'utente
+  bool limitaCaratteri(String nome, String cognome, String indirizzo) {
+    if (nome.length > 30 || cognome.length > 30 || indirizzo.length > 30) {
+      return false; // Se la lunghezza è già <= 30, restituisci la stringa originale
+    } else {
+      return true; // Altrimenti, restituisci i primi 30 caratteri
     }
   }
-  */
 
   logout(BuildContext context) {
     showDialog<void>(
@@ -125,8 +116,6 @@ class ProfiloViewModel extends ChangeNotifier {
                   Navigator.of(context).pop(); // Chiudi il dialogo
                   Navigator.pop(context);
                   signOut();
-                  showSnackBar("Logout effettuato con successo",
-                      context); // Esegui il logout
                 },
               ),
             ],

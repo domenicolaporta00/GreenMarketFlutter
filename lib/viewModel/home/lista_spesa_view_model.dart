@@ -1,90 +1,136 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:green_market_flutter/model/product_model.dart';
-import 'package:green_market_flutter/model/prodotto_in_lista_model.dart';
+import 'package:green_market_flutter/model/product_in_shopping_list_model.dart';
 import 'package:flutter/material.dart';
+
+import '../../model/user_model.dart';
 
 class ListaSpesaViewModel extends ChangeNotifier {
 
-  /*ListaSpesaModel _listaSpesa = ListaSpesaModel(prodotti: {});
-  ListaSpesaModel get listaSpesa => _listaSpesa;*/
+  User? currentUser = FirebaseAuth.instance.currentUser;
 
-  List<ProdottoInListaModel> _listaProdotti = [];
-  List<ProdottoInListaModel> get listaProdotti => _listaProdotti;
+  List<ProductInShoppingList> _listaProdotti = [];
+  List<ProductInShoppingList> get listaProdotti => _listaProdotti;
 
-  ProductModel _prodottoDettagliato = ProductModel(nome: "", descrizione: "", prezzo: 0.0, foto: "");
+  late ProductModel _prodottoDettagliato = ProductModel(nome: "", descrizione: "", prezzo: 0.0, foto: "");
   ProductModel get prodottoDettagliato => _prodottoDettagliato;
 
   double _totale = 0.0;
   double get totale => _totale;
 
-  getListaSpesa() {
-    /*_listaSpesa = ListaSpesaModel(prodotti: {
-      "Mele": [1.5, 2.0, 3.0],
-      "Pere": [2.0, 2.5, 5.0],
-      "Banane": [1.0, 1.0, 1.0]
-    });*/
-    _listaProdotti = [
-      ProdottoInListaModel(nome: "Mele", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
-      ProdottoInListaModel(nome: "Pere", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
-      ProdottoInListaModel(nome: "Banane", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
-      ProdottoInListaModel(nome: "Mele2", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
-      ProdottoInListaModel(nome: "Pere2", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
-      ProdottoInListaModel(nome: "Banane2", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
-      ProdottoInListaModel(nome: "Mele3", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
-      ProdottoInListaModel(nome: "Pere3", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
-      ProdottoInListaModel(nome: "Banane3", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
-      ProdottoInListaModel(nome: "Mele4", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
-      ProdottoInListaModel(nome: "Pere4", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
-      ProdottoInListaModel(nome: "Banane4", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
-    ];
-    notifyListeners();
+  Future<List<ProductInShoppingList>> getListaDellaSpesa() async {
+    try {
+      late final CollectionReference<UserModel> userRef = FirebaseFirestore
+          .instance.collection("users").withConverter<UserModel>(
+        fromFirestore: (snapshot, _) => UserModel.fromJson(snapshot.data()!),
+        toFirestore: (user, _) => user.toJson(),
+      );
+      DocumentSnapshot<UserModel> user = await userRef.doc(currentUser?.uid)
+          .get();
+
+      if (currentUser?.uid != null) {
+        if (user.data() != null) {
+          // Inizializzare la mappa se è null
+          Map<String, List<double>> listaDellaSpesa = user.data()?.listaDellaSpesa ?? {};
+
+          List<ProductInShoppingList> listaConvertita = convertiMapInLista(listaDellaSpesa);
+          _listaProdotti = listaConvertita;
+          getTotale();
+        }
+      }
+      notifyListeners();
+      return listaProdotti;
+    }catch (e) {
+      print("Errore nel recuperare i prodotti: $e");
+      return [];
+    }
   }
 
-  getProdottoByNome(ProdottoInListaModel prod) {
-    List<ProductModel> prodotti = [
-      ProductModel(nome: "Mele", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      ProductModel(nome: "Pere", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      ProductModel(nome: "Banane", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      ProductModel(nome: "Mele2", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      ProductModel(nome: "Pere2", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      ProductModel(nome: "Banane2", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      ProductModel(nome: "Mele3", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      ProductModel(nome: "Pere3", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      ProductModel(nome: "Banane3", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      ProductModel(nome: "Mele4", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      ProductModel(nome: "Pere4", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      ProductModel(nome: "Banane4", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg"),
-      ProductModel(nome: "Mele5", descrizione: "Sono mele", prezzo: 2.0, foto: "images/mela.jpg"),
-      ProductModel(nome: "Pere5", descrizione: "Sono pere", prezzo: 2.5, foto: "images/pera.jpg"),
-      ProductModel(nome: "Banane5", descrizione: "Sono banane", prezzo: 1.0, foto: "images/banana.jpg")
-    ];
-    _prodottoDettagliato = prodotti.firstWhere((p)=>p.nome == prod.nome);
-    notifyListeners();
+  //Metodo che converte la lista della spesa (Map) presa dal db firestore in una List<ProdottoInListaModel>
+  List<ProductInShoppingList> convertiMapInLista(Map<String, List<double>> map) {
+    List<ProductInShoppingList> listaProdotti = [];
+
+    map.forEach((nomeProdotto, valori) {
+      double quantita = valori[0];
+      double prezzoAlKg = valori[1];
+      double prezzoTotale = valori[2];
+
+      ProductInShoppingList prodotto = ProductInShoppingList(
+        nome: nomeProdotto,
+        quantita: quantita,
+        prezzoAlKg: prezzoAlKg,
+        prezzoTotale: arrotonda(prezzoTotale, 2),
+      );
+
+      listaProdotti.add(prodotto);
+    });
+
+    return listaProdotti;
   }
 
-  deleteListaSpesa() {
-    _listaProdotti = [];
-    getTotale();
-    notifyListeners();
+  //Metodo che converte una List<ProdottoInListaModel> in una lista della spesa (Map) presa dal db firestore
+  Map<String, List<double>> convertiListaInMap(List<ProductInShoppingList> listaProdotti) {
+    Map<String, List<double>> map = {};
+
+    for (var prodotto in listaProdotti) {
+      String nomeProdotto = prodotto.nome;
+      double quantita = prodotto.quantita;
+      double prezzoAlKg = prodotto.prezzoAlKg;
+      double prezzoTotale = prodotto.prezzoTotale;
+
+      map[nomeProdotto] = [quantita, prezzoAlKg, prezzoTotale];
+    }
+
+    return map;
   }
 
-  deleteByName(String nome) {
-    List<ProdottoInListaModel> prodotti = [
-      ProdottoInListaModel(nome: "Mele", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
-      ProdottoInListaModel(nome: "Pere", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
-      ProdottoInListaModel(nome: "Banane", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
-      ProdottoInListaModel(nome: "Mele2", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
-      ProdottoInListaModel(nome: "Pere2", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
-      ProdottoInListaModel(nome: "Banane2", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
-      ProdottoInListaModel(nome: "Mele3", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
-      ProdottoInListaModel(nome: "Pere3", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
-      ProdottoInListaModel(nome: "Banane3", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
-      ProdottoInListaModel(nome: "Mele4", quantita: 1.5, prezzo: 2.0, prezzoTotale: 3.0),
-      ProdottoInListaModel(nome: "Pere4", quantita: 2.0, prezzo: 2.5, prezzoTotale: 5.0),
-      ProdottoInListaModel(nome: "Banane4", quantita: 1.0, prezzo: 1.0, prezzoTotale: 1.0),
-    ];
-    prodotti.removeWhere((p)=>p.nome == nome);
-    _listaProdotti = prodotti;
-    getTotale();
+
+  getProdottoByNome(ProductInShoppingList prod) async{
+    ProductInShoppingList prodotto = listaProdotti.firstWhere((p)=>p.nome == prod.nome);
+    try {
+      final productDoc = await FirebaseFirestore.instance.collection('products').doc(prodotto.nome).get();
+
+      if (productDoc.exists) {
+        _prodottoDettagliato = ProductModel.fromDocument(productDoc);
+        notifyListeners();
+      } else {
+        print("Prodotto non trovato");
+      }
+    } catch (e) {
+      print("Errore nella ricerca del prodotto: $e");
+    }
+
+  }
+
+
+  Future<void> deleteListaSpesa() async {
+    final DocumentReference userDoc = FirebaseFirestore.instance.collection('users').doc(currentUser?.uid);
+
+    //Aggiorna la lista della spesa a vuota
+    await userDoc.update({
+      'listaDellaSpesa': {},
+    });
+
+    // Attendo il calcolo del totale
+    await getTotale();
+  }
+
+
+  Future<void> deleteByName(String nome) async{
+    final DocumentReference userDoc = FirebaseFirestore.instance.collection('users').doc(currentUser?.uid);
+
+    listaProdotti.removeWhere((prod) => prod.nome == nome);
+    Map<String, List<double>> listaDellaSpesa = convertiListaInMap(listaProdotti);
+
+    //Aggiorna la lista della spesa a vuota
+    await userDoc.update({
+      'listaDellaSpesa': listaDellaSpesa,
+    });
+
+    await getTotale();
     notifyListeners();
   }
 
@@ -93,8 +139,14 @@ class ListaSpesaViewModel extends ChangeNotifier {
     for(var i in _listaProdotti) {
       tot = tot + i.prezzoTotale;
     }
-    _totale = tot;
+    _totale = arrotonda(tot, 2);
     notifyListeners();
+  }
+
+  //Funzione per arrotondare ad un certo numero di decimali
+  double arrotonda(double valore, int decimali) {
+    int fattore = pow(10, decimali).toInt();
+    return (valore * fattore).round() / fattore;
   }
 
   showSnackBar(String message, BuildContext context) {

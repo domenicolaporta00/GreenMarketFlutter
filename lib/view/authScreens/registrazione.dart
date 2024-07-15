@@ -144,6 +144,7 @@ class _RegisterActivityState extends State<RegisterActivity> {
                             emailTextEditController.text.trim(),
                             passwordTextEditController.text.trim(),
                             passwordConfirmTextEditController.text.trim(),
+                            {},
                             context
                         )) {
                           Navigator.pushReplacement(context,

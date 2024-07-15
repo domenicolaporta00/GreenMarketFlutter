@@ -7,10 +7,15 @@ class PasswordDimenticataViewModel{
 
   final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
   final Auth auth = Auth();
-  
+
+  //Metodo che gestisce l'inserimento e l'invio della mail
   Future<bool> recuperaPassword(String email, BuildContext context) async {
     if(email.isEmpty) {
       showSnackBar("Inserire un'email!", context);
+      return false;
+    }
+    else if(email.length > 50){
+      showSnackBar("L'email può contentere max 50 caratteri", context);
       return false;
     }
     else {

@@ -2,9 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../model/product_model.dart';
 import '../model/user_model.dart';
 
-//Costante per accedere al db Firestore
-const String USER_COLLECTION_REF = "users";
-
 //Classe che gestisce l'utente a livello di database mediante Firebase Firestore
 class DatabaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -13,7 +10,7 @@ class DatabaseService {
   DatabaseService({required this.uid});
 
   //Riferimento alla raccolta "users" nel db Firestore
-  late final CollectionReference<UserModel> _userRef = _firestore.collection(USER_COLLECTION_REF).withConverter<UserModel>(
+  late final CollectionReference<UserModel> _userRef = _firestore.collection("users").withConverter<UserModel>(
     fromFirestore: (snapshot, _) => UserModel.fromJson(snapshot.data()!),
     toFirestore: (user, _) => user.toJson(),
   );
@@ -55,5 +52,7 @@ class DatabaseService {
       print(e.toString());
     }
   }
+
+
 }
 
